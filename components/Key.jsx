@@ -1,54 +1,38 @@
 export default function Key({
   type,
-  name,
   symbol,
   area,
-  setNumberFunction,
-  setSymbolFunction,
+  handleNumberClick,
+  handleOperatorClick,
+  handleEqualClick,
+  handleDelClick,
+  handleAcClick,
 }) {
-  const numberHandleClick = () => {
-    if (type === "number") {
-      setNumberFunction((prev) => {
-        if (symbol === ".") {
-          return prev + symbol;
-        }
-        if (prev === "0") {
-          return symbol;
-        } else {
-          return prev + symbol;
-        }
-      });
+  const handleClick = () => {
+    switch (type) {
+      case "number":
+        handleNumberClick(symbol);
+        break;
+      case "operator":
+        symbol === "AC"
+          ? handleAcClick()
+          : symbol === "DEL"
+          ? handleDelClick()
+          : handleOperatorClick(symbol);
+
+        break;
+      case "equal":
+        handleEqualClick();
+        break;
+      default:
+        console.error("Invalid key type");
     }
   };
 
-  const symbolHandleClick = () => {
-    if (type === "operator") {
-      if (symbol === "AC") {
-        setNumberFunction("0");
-      } else if (symbol === "DEL") {
-        setNumberFunction((prev) => {
-          if (prev.length > 1) {
-            return prev.slice(0, -1);
-          } else {
-            return prev;
-          }
-        });
-      } else {
-        setSymbolFunction(symbol);
-      }
-    }
-  };
-  const decideClick = () => {
-    type === "number"
-      ? numberHandleClick()
-      : type === "operator"
-      ? symbolHandleClick()
-      : console.log("jejo");
-  };
   return (
     <>
       <button
-        onClick={decideClick}
+        onClick={handleClick}
         className={
           type === "operator"
             ? "btnKey operatorKey"

@@ -24,28 +24,100 @@ const keysList = [
 ];
 
 function App() {
-  const[number, setNumber] = useState("0");
+  const [displayNumber, setDisplayNumber] = useState("0");
   const [symbol, setSymbol] = useState(undefined);
-  console.log(symbol)
+  const [firstNumber, setFirstNumber] = useState(undefined);
+  let result;
 
+  const handleNumberClick = (number) => {
+    if (displayNumber === "0") {
+      setDisplayNumber(number);
+    } else {
+      setDisplayNumber(displayNumber + number);
+    }
+  };
 
+  const handleOperatorClick = (operator) => {
+    if (firstNumber === undefined) {
+      setFirstNumber(displayNumber);
+      setSymbol(operator);
+      setDisplayNumber("0");
+    } else {
+      calculateResult();
+      setFirstNumber(result);
+      setSymbol(operator);
+      setDisplayNumber("0");
+    }
+  };
+
+  const handleEqualClick = () => {
+    if (firstNumber !== undefined && displayNumber !== "0") {
+      calculateResult();
+      setDisplayNumber(result);
+      setFirstNumber(undefined);
+      setSymbol(undefined);
+    }
+  };
+
+  const handleDelClick = () => {
+    if (displayNumber.length > 1) {
+      setDisplayNumber(displayNumber.slice(0, -1));
+    } else {
+      setDisplayNumber("0");
+    }
+  };
+
+  const handleAcClick = () => {
+    setSymbol(undefined);
+    setDisplayNumber("0");
+    setFirstNumber(undefined);
+  };
+
+  const calculateResult = () => {
+    if (firstNumber !== undefined && displayNumber !== "0") {
+      switch (symbol) {
+        case "+":
+          result = parseFloat(firstNumber) + parseFloat(displayNumber);
+          break;
+        case "-":
+          result = parseFloat(firstNumber) - parseFloat(displayNumber);
+          break;
+        case "x":
+          result = parseFloat(firstNumber) * parseFloat(displayNumber);
+          break;
+        case "%":
+          result = parseFloat(firstNumber) / parseFloat(displayNumber);
+          break;
+        default:
+          console.error("Invalid operator");
+      }
+      return result;
+    }
+  };
 
   return (
     <>
       <div className="container">
         <div className="calculator">
-          <div className="display">{number}</div>
+          <div className="display">
+            <div className="operation">
+              {symbol !== undefined ? firstNumber + " " + symbol : ""}
+            </div>
+            {displayNumber}
+          </div>
           <div className="keys">
             {keysList.map((key) => {
               return (
                 <Key
                   key={key.name}
                   type={key.type}
-                  name={key.name}
                   symbol={key.symbol}
                   area={key.area}
-                  setNumberFunction={setNumber}
-                  setSymbolFunction={setSymbol}
+                  handleNumberClick={handleNumberClick}
+                  handleOperatorClick={handleOperatorClick}
+                  handleEqualClick={handleEqualClick}
+                  handleDelClick={handleDelClick}
+                  handleAcClick={handleAcClick}
                 />
               );
             })}
